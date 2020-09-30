@@ -53,6 +53,10 @@ def main():
     cap = cv2.VideoCapture("./tl_violation.MP4")
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     
+    width  = cap.get(3) # float
+    height = cap.get(4) # float
+    out = cv2.VideoWriter('tl_violation_processed.mp4', cv2.VideoWriter_fourcc('M','J','P','G'), 60.0, (int(width),int(height)))
+
     tl_id_0_0 = (2908, 759, 36, 67)
     tl_id_0_1 = (3141, 742, 37, 72)
     tl_id_1_0 = (1167, 783, 35, 73)
@@ -97,6 +101,7 @@ def main():
             # print(pred)
 
         cv2.imshow('frame', frame_debug)
+        out.write(frame_debug)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
@@ -106,7 +111,8 @@ def main():
         # break 
 
     cap.release()
-    # cv2.destroyAllWindows()
+    out.release()
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':
