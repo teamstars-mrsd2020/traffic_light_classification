@@ -108,15 +108,15 @@ def main():
             
             cv2.rectangle(frame_debug, (bbox[0], bbox[1]), (bbox[0] + bbox[2], bbox[1] + bbox[3]), color_class, 5)
             
-            if tid < 2:    
-                tl_id.append(tid)
-                frame_ids.append(frame_id+1)
-                states.append(tl_state_map[int(pred)])
-        
-        for j in range(2):
-            tl_id.append(j+2)
+            # if tid < 2:    
+            tl_id.append(tid)
             frame_ids.append(frame_id+1)
-            states.append(tl_state_map[0])
+            states.append(tl_state_map[int(pred)])
+        
+        # for j in range(2):
+        #     tl_id.append(j+2)
+        #     frame_ids.append(frame_id+1)
+            # states.append(tl_state_map[0])
     
         cv2.imshow('frame', frame_debug)
         out.write(frame_debug)
