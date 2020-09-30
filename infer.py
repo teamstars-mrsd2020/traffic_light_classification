@@ -50,12 +50,12 @@ def main():
 
     model = load_model(device)
 
-    cap = cv2.VideoCapture("./tl_violation.MP4")
+    cap = cv2.VideoCapture("./inputs/tl_violation.MP4")
     length = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     
     width  = cap.get(3) # float
     height = cap.get(4) # float
-    out = cv2.VideoWriter('tl_violation_processed.mp4', cv2.VideoWriter_fourcc('M','J','P','G'), 60.0, (int(width),int(height)))
+    out = cv2.VideoWriter('outputs/tl_violation_processed.mp4', cv2.VideoWriter_fourcc('M','J','P','G'), 30.0, (int(width),int(height)))
 
     tl_id_0_0 = (2908, 759, 36, 67)
     tl_id_0_1 = (3141, 742, 37, 72)
