@@ -6,6 +6,7 @@ import torch
 from torchsummary import summary
 from model import * 
 from PIL import Image
+import pandas as pd
 
 def test(model, device, frame, preprocess):
 
@@ -37,6 +38,8 @@ def load_model(device):
     return model
 
 def main():
+    
+    tl_state_map = {0:"red", 1:"yellow", 2:"green"}
 
     preprocess = transforms.Compose([
         transforms.Resize(40),
@@ -55,27 +58,34 @@ def main():
     
     width  = cap.get(3) # float
     height = cap.get(4) # float
-    out = cv2.VideoWriter('outputs/tl_violation_processed.mp4', cv2.VideoWriter_fourcc('M','J','P','G'), 30.0, (int(width),int(height)))
+    out = cv2.VideoWriter('outputs/tl_violation_processed.mp4', 
+        cv2.VideoWriter_fourcc('M','J','P','G'), 30.0, (int(width),int(height)))
 
     tl_id_0_0 = (2908, 759, 36, 67)
     tl_id_0_1 = (3141, 742, 37, 72)
     tl_id_1_0 = (1167, 783, 35, 73)
     tl_id_1_1 = (1314, 790, 32, 68)
 
-    bboxes = [tl_id_0_0, tl_id_0_1, tl_id_1_0, tl_id_1_1]
+    bboxes = [tl_id_0_0, tl_id_1_0, tl_id_0_1, tl_id_1_1]
+    
+    tl_id = []
+    frame_ids = []
+    states = []
 
-    ret = True
-    frame_id = 0
     count = 0
-    while(ret):
-        # Capture frame-by-frame
+    for frame_id in range(length):
+        
         ret, frame = cap.read()
+
+        if not ret:
+            break
+
         frame_debug = frame.copy()
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
         frame = Image.fromarray(frame)
 
-        for bbox in bboxes:
+        for tid, bbox in enumerate(bboxes):
 
             c_x = bbox[0] + ( bbox[2]/2 )
             c_y = bbox[1] + ( bbox[3]/2 )
@@ -98,22 +108,31 @@ def main():
             
             cv2.rectangle(frame_debug, (bbox[0], bbox[1]), (bbox[0] + bbox[2], bbox[1] + bbox[3]), color_class, 5)
             
-            # print(pred)
-
+            if tid < 2:    
+                tl_id.append(tid)
+                frame_ids.append(frame_id+1)
+                states.append(tl_state_map[int(pred)])
+        
+        for j in range(2):
+            tl_id.append(j+2)
+            frame_ids.append(frame_id+1)
+            states.append(tl_state_map[0])
+    
         cv2.imshow('frame', frame_debug)
         out.write(frame_debug)
         
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
 
-        frame_id += 1
-
-        # break 
-
     cap.release()
     out.release()
     cv2.destroyAllWindows()
 
+    d = {'frame_id': frame_ids, 'tl_id': tl_id, 'tl_state': states}
+    df = pd.DataFrame(data=d)
+    df.to_csv("outputs/tl_violation.csv")
+
+    # from IPython import embed; embed()
 
 if __name__ == '__main__':
     main()
