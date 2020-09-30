@@ -95,17 +95,17 @@ def main():
     # torch.backends.cudnn.deterministic = True
 
     # Train
-    train_dataset = TLDataset("./processed_data/train/")
+    train_dataset = TLFineTuneDataset("./new_dataset/")
     train_loader = DataLoader(train_dataset, shuffle=True, batch_size=config.batch_size, drop_last=True, **kwargs)
 
     # Dev
-    dev_dataset = TLDataset("./processed_data/test/")
-    dev_loader = DataLoader(dev_dataset, shuffle=False, batch_size=config.test_batch_size, **kwargs)
+    # dev_dataset = TLDataset("./processed_data/test/")
+    # dev_loader = DataLoader(dev_dataset, shuffle=False, batch_size=config.test_batch_size, **kwargs)
 
     print("Data Loading Complete.")
 
     print("Training size: " , len(train_loader.dataset))
-    print("Dev size: " , len(dev_loader.dataset))
+    # print("Dev size: " , len(dev_loader.dataset))
 
     model = TLClassification()
     print(model)
@@ -127,7 +127,7 @@ def main():
         wandb.log({"lr": scheduler.get_last_lr()})
         
         train(config, model, device, train_loader, optimizer, epoch, criterion)
-        test(config, model, device, dev_loader, criterion)
+        # test(config, model, device, dev_loader, criterion)
         scheduler.step()
         
         model_name = "checkpoints/model_epoch_" + str(epoch) + "_" + str(run.name) + ".h5"

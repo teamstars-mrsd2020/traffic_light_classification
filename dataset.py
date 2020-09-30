@@ -128,7 +128,7 @@ class TLFineTuneDataset(Dataset):
 
         
     def __len__(self):
-        return self.labels.shape[0]
+        return len(self.labels)
     
     def __getitem__(self, idx):
         path = self.data[idx]

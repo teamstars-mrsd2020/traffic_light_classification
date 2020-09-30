@@ -58,9 +58,7 @@ def main():
     tl_id_1_0 = (1167, 783, 35, 73)
     tl_id_1_1 = (1314, 790, 32, 68)
 
-    # bboxes = [tl_id_0_0, tl_id_0_1, tl_id_1_0, tl_id_1_1]
-    bboxes = [tl_id_0_0, tl_id_0_1] #, tl_id_1_0, tl_id_1_1]
-    # bboxes = [tl_id_0_0]
+    bboxes = [tl_id_0_0, tl_id_0_1, tl_id_1_0, tl_id_1_1]
 
     ret = True
     frame_id = 0
@@ -82,8 +80,8 @@ def main():
             side = int(min(bbox[2], bbox[3]))
 
             data_frame = frame.crop((c_x-side, c_y-side, c_x+side, c_y+side)) 
-            file_name = "./new_dataset/img_" + str(count)
-            data_frame.save(file_name, "JPEG")
+            # file_name = "./new_dataset/img_" + str(count)
+            # data_frame.save(file_name, "JPEG")
             count += 1
             pred = test(model, device, data_frame, preprocess)
             
