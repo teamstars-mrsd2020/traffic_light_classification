@@ -61,12 +61,28 @@ def main():
     out = cv2.VideoWriter('outputs/tl_violation_processed.mp4', 
         cv2.VideoWriter_fourcc('M','J','P','G'), 30.0, (int(width),int(height)))
 
-    tl_id_0_0 = (2908, 759, 36, 67)
-    tl_id_0_1 = (3141, 742, 37, 72)
-    tl_id_1_0 = (1167, 783, 35, 73)
-    tl_id_1_1 = (1314, 790, 32, 68)
 
-    bboxes = [tl_id_0_0, tl_id_1_0, tl_id_0_1, tl_id_1_1]
+    # # 001 001 002
+    # tl_id_l = (773, 391, 17, 40)
+    # tl_id_r = (1767, 407, 15, 41)
+    # offset = 0 # 0 or 2
+
+    # # 001 003 002
+    # tl_id_l = (774, 392, 15, 38)
+    # tl_id_r = (1423, 396, 17, 44)
+    # offset = 2 # 0 or 2
+
+    # 002 001 001
+    tl_id_l = (568, 383, 10, 26)
+    tl_id_r = (1625, 391, 18, 47)
+    offset = 0
+
+    # # 002 003 001
+    # tl_id_l = (569, 389, 9, 21)
+    # tl_id_r = (1010, 385, 10, 26)
+    # offset = 2 # 0 or 2
+
+    bboxes = [tl_id_l, tl_id_r]
     
     tl_id = []
     frame_ids = []
@@ -94,8 +110,9 @@ def main():
             side = int(min(bbox[2], bbox[3]))
 
             data_frame = frame.crop((c_x-side, c_y-side, c_x+side, c_y+side)) 
-            # file_name = "./new_dataset/img_" + str(count)
-            # data_frame.save(file_name, "JPEG")
+            # if tid==1:
+            #     file_name = "./new_dataset_1/img_" + str(count)
+            #     data_frame.save(file_name, "JPEG")
             count += 1
             pred = test(model, device, data_frame, preprocess)
             
@@ -108,15 +125,10 @@ def main():
             
             cv2.rectangle(frame_debug, (bbox[0], bbox[1]), (bbox[0] + bbox[2], bbox[1] + bbox[3]), color_class, 5)
             
-            # if tid < 2:    
-            tl_id.append(tid)
+            tl_id.append(tid + offset)
             frame_ids.append(frame_id+1)
             states.append(tl_state_map[int(pred)])
         
-        # for j in range(2):
-        #     tl_id.append(j+2)
-        #     frame_ids.append(frame_id+1)
-            # states.append(tl_state_map[0])
     
         cv2.imshow('frame', frame_debug)
         out.write(frame_debug)
@@ -132,7 +144,6 @@ def main():
     df = pd.DataFrame(data=d)
     df.to_csv("outputs/tl_violation.csv")
 
-    # from IPython import embed; embed()
 
 if __name__ == '__main__':
     main()
